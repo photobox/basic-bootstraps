@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-### This script installs Puppet agent and facter.
+### This script installs Puppet agent and facter on Ubuntu.
 
 if [[ "$(whoami)" != "root" ]]; then
   echo "Must be run as root"
