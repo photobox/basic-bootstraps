@@ -10,7 +10,6 @@ fi
 
 PUPPET_VERSION=${PUPPET_VERSION:-"2.7.21-1puppetlabs1"}
 FACTER_VERSION=${FACTER_VERSION:-"1.7.0-1puppetlabs1"}
-INSTALL_PUPPET=0
 
 have_version(){
   local PACKAGE=$1
