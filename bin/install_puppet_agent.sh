@@ -21,11 +21,14 @@ have_version(){
   return 1
 }
 
-have_version puppet $PUPPET_VERSION || INSTALL_PUPPET=1
-have_version puppet-common $PUPPET_VERSION || INSTALL_PUPPET=1
-have_version facter $FACTER_VERSION || INSTALL_PUPPET=1
+puppet_is_current(){
+  have_version puppet $PUPPET_VERSION || return 1
+  have_version puppet-common $PUPPET_VERSION || return 1
+  have_version facter $FACTER_VERSION || return 1
+  return 0
+}
 
-if [[ "$INSTALL_PUPPET" == "1" ]]; then
+if ! puppet_is_current; then
   (
     TMPDIR=$(mktemp -d -p /tmp puppetinstall.XXXXXXXX)
     cd $TMPDIR
