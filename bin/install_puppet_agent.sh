@@ -3,11 +3,12 @@ set -e
 
 ### This script installs Puppet agent and facter on Ubuntu.
 
-if [[ "$(whoami)" != "root" ]]; then
-  echo "Must be run as root"
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root" 1>&2
   exit
 fi
 
+DEBIAN_FRONTEND=noninteractive
 PUPPET_VERSION=${PUPPET_VERSION:-"2.7.21-1puppetlabs1"}
 FACTER_VERSION=${FACTER_VERSION:-"1.7.0-1puppetlabs1"}
 
