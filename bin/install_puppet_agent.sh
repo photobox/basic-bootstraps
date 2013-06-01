@@ -29,15 +29,11 @@ puppet_is_current(){
 }
 
 if ! puppet_is_current; then
-  (
-    TMPDIR=$(mktemp -d -p /tmp puppetinstall.XXXXXXXX)
-    cd $TMPDIR
-    apt-get -y purge $(dpkg -l|grep puppet|awk '{print $2}')
-    apt-get -y install wget
-    DEB="puppetlabs-release-$(lsb_release -c -s).deb"
-    wget -q http://apt.puppetlabs.com/$DEB -O $DEB
-    dpkg -i $DEB
-    apt-get update
-    apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION subversion vim-puppet=$PUPPET_VERSION
-  )
+  DEB=$(mktemp -p /tmp puppetlabs-release.XXXXXXXX.deb)
+  apt-get -y purge $(dpkg -l|grep puppet|awk '{print $2}')
+  apt-get -y install wget
+  wget -q http://apt.puppetlabs.com/puppetlabs-release-$(lsb_release -c -s).deb -O $DEB
+  dpkg -i $DEB
+  apt-get update
+  apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION vim-puppet=$PUPPET_VERSION
 fi
