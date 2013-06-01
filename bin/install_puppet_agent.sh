@@ -29,7 +29,7 @@ puppet_is_current(){
 }
 
 if ! puppet_is_current; then
-  DEB=$(mktemp -d -p /tmp puppetlabs-release.XXXXXXXX.deb)
+  DEB=$(mktemp -p /tmp puppetlabs-release.XXXXXXXX.deb)
   apt-get -y purge $(dpkg -l|grep puppet|awk '{print $2}')
   apt-get -y install wget
   wget -q http://apt.puppetlabs.com/puppetlabs-release-$(lsb_release -c -s).deb -O $DEB
