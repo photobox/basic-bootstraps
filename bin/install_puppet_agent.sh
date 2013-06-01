@@ -35,5 +35,5 @@ if ! puppet_is_current; then
   wget -q http://apt.puppetlabs.com/puppetlabs-release-$(lsb_release -c -s).deb -O $DEB
   dpkg -i $DEB
   apt-get update
-  apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION subversion vim-puppet=$PUPPET_VERSION
+  apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION vim-puppet=$PUPPET_VERSION
 fi
