@@ -28,8 +28,8 @@ if [ -z "$SVN_USER" -o -z "$SVN_PASSWORD" -o -z "$SITENAME" ]; then
   usage
 fi
 
-HOSTNAME=$(hostname -f)
-if ! ( echo $HOSTNAME|grep -qP $HOSTNAME_RX ); then
+MY_HOSTNAME=$(hostname -f)
+if ! ( echo $MY_HOSTNAME|grep -qP $HOSTNAME_RX ); then
   echo "Hostname must be of the form $HOSTNAME_RX, resolve this before continuing"
   exit 1
 fi
@@ -40,14 +40,14 @@ if ! ( echo $MY_ADDRESS|grep -qP $IP_ADDRESS_RX ); then
   exit 1
 fi
 
-if [[ -z "$(dig +short A $HOSTNAME)" ]]; then
-  echo "No A record exists for $HOSTNAME, resolve this before continuing"
+if [[ -z "$(dig +short A $MY_HOSTNAME)" ]]; then
+  echo "No A record exists for $MY_HOSTNAME, resolve this before continuing"
   exit 1
 fi
 
-MY_A_RECORD=$(dig +short A $HOSTNAME)
+MY_A_RECORD=$(dig +short A $MY_HOSTNAME)
 if [[ "$MY_A_RECORD" != $MY_ADDRESS ]]; then
-  echo "The A record for $HOSTNAME ($MY_A_RECORD) does not match its IP address ($MY_ADDRESS), resolve this before continuing"
+  echo "The A record for $MY_HOSTNAME ($MY_A_RECORD) does not match its IP address ($MY_ADDRESS), resolve this before continuing"
   exit 1
 fi
 
