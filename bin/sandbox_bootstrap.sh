@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-### This script gets a basic machine to state where Puppet can install a babel sandbox
+# This script performs a check of the host's networking configuration a host to
+# ensure it conforms to sandbox specification, installs the standard version of
+# puppet & facter for babel, checks out the babel Puppet code and executes it.
 
 PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
@@ -68,3 +70,9 @@ fi
 
 cd $DIR
 FACTER_SITENAME=$SITENAME puppet apply manifests/site.pp --modulepath=modules
+
+echo "Installation has completed, calling the frontend /status page"
+curl http://localhost/status
+echo
+
+echo "If the status pages look correct try accessing the Photobox website at http://$MY_HOSTNAME/"
