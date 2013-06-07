@@ -28,7 +28,7 @@ if [ -z "$PUPPET_REPO" ]; then
   usage
 fi
 
-if [ -z "$SVN_USER" -o -z "$SVN_PASSWORD" -o -z "$SITENAME" ]; then
+if [ -z "$SVN_USER" -o -z "$SVN_PASSWORD" ]; then
   usage
 fi
 
