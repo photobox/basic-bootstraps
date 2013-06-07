@@ -32,8 +32,11 @@ if [ -z "$SVN_USER" -o -z "$SVN_PASSWORD" ]; then
   usage
 fi
 
+apt-get update
+apt-get -y install dnsutils wget subversion
+
 MY_HOSTNAME=$(hostname -f)
-if ! ( echo $MY_HOSTNAME|grep -qP $HOSTNAME_RX ); then
+if ! ( echo $MY_HOSTNAME|grep -qiP $HOSTNAME_RX ); then
   echo "Hostname must be of the form $HOSTNAME_RX, resolve this before continuing"
   exit 1
 fi
@@ -55,7 +58,6 @@ if [[ "$MY_A_RECORD" != $MY_ADDRESS ]]; then
   exit 1
 fi
 
-apt-get -y install dnsutils wget subversion
 wget -q https://raw.github.com/photobox/basic-bootstraps/master/bin/install_puppet_agent.sh -O - | bash
 
 DIR=puppet_svn
