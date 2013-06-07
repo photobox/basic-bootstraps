@@ -2,8 +2,10 @@
 set -e
 
 # This script performs a check of the host's networking configuration a host to
-# ensure it conforms to sandbox specification, installs the standard version of
-# puppet & facter for babel, checks out the babel Puppet code and executes it.
+# ensure it conforms to sandbox specification. If the check passes it installs
+# the standard version of puppet & facter for babel, checks out the babel
+# Puppet code and executes it. The end result should be the Photobox website
+# running on the machine.
 
 PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
