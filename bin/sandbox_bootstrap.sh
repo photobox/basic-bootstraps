@@ -73,7 +73,7 @@ else
 fi
 
 cd $DIR
-FACTER_SITENAME=$SITENAME puppet apply manifests/site.pp --modulepath=modules
+FACTER_SITENAME=$SITENAME puppet apply manifests/site.pp --modulepath=modules --confdir=.
 
 echo "Installation has completed, calling the frontend /status page"
 curl http://localhost/status
