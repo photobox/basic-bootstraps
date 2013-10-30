@@ -10,8 +10,9 @@ set -e
 PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
 
-HOSTNAME_RX='^[a-z]+-sandbox[1-9]?\.photobox\.priv$'
-IP_ADDRESS_RX='^10\.5\.16\.[0-9]+$'
+# UK: 10.5.16.[0-9]+, FR: 10.10.7.[0-9]+
+HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]?\.photobox\.priv$'
+IP_ADDRESS_RX='^(10\.(5\.16|10\.7)\.[0-9]+)$'
 
 if [[ $EUID -ne 0 ]]; then
   echo "This script must be run as root" 1>&2
