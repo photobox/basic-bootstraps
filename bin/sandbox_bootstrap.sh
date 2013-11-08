@@ -10,9 +10,7 @@ set -e
 PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
 
-# UK: 10.5.16.[0-9]+, FR: 10.10.7.[0-9]+
-HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]?\.photobox\.priv$'
-IP_ADDRESS_RX='^(10\.(5\.16|10\.7)\.[0-9]+)$'
+HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]?(\.core)?\.photobox\.(priv|com)$'
 
 if [[ $EUID -ne 0 ]]; then
   echo "This script must be run as root" 1>&2
@@ -39,12 +37,6 @@ apt-get -y install dnsutils wget subversion
 MY_HOSTNAME=$(hostname -f)
 if ! ( echo $MY_HOSTNAME|grep -qiP $HOSTNAME_RX ); then
   echo "Hostname must be of the form $HOSTNAME_RX, resolve this before continuing"
-  exit 1
-fi
-
-MY_ADDRESS=$(ip -o addr list dev eth0 primary|perl -nE 'print $1 if m#inet ([^/]+)#')
-if ! ( echo $MY_ADDRESS|grep -qP $IP_ADDRESS_RX ); then
-  echo "The IP address for this host ($MY_ADDRESS) does not match $IP_ADDRESS_RX, resolve this before continuing"
   exit 1
 fi
 
