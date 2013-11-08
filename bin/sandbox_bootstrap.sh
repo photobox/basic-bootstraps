@@ -62,7 +62,7 @@ fi
 wget -q https://raw.github.com/photobox/basic-bootstraps/master/bin/install_puppet_agent.sh -O - | bash
 
 DIR=puppet_svn
-SVN_URL="http://svn.photobox.co.uk/babel/handsfree/puppet/$PUPPET_REPO"
+SVN_URL="http://svn.core.photobox.com/babel/handsfree/puppet/$PUPPET_REPO"
 SVN_OPTS="--username $SVN_USER --password $SVN_PASSWORD --no-auth-cache"
 echo "Checking out $SVN_URL to $DIR"
 
