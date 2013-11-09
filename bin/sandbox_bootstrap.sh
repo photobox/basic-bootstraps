@@ -66,7 +66,7 @@ else
 fi
 
 cd $DIR
-FACTER_SITENAME=$SITENAME puppet apply manifests/site.pp --modulepath=modules --confdir=.
+FACTER_SITENAME=$SITENAME puppet apply  --pluginsync --detailed-exitcodes manifests/site.pp --modulepath=modules --confdir=.
 
 echo "Installation has completed, calling the frontend /status page"
 curl http://localhost/status
