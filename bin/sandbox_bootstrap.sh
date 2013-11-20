@@ -9,6 +9,7 @@ set -e
 
 PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
+MY_ADDRESS=`hostname -i |awk '{print $1;}'
 
 HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]?(\.core)?\.photobox\.(priv|com)$'
 
@@ -40,12 +41,12 @@ if ! ( echo $MY_HOSTNAME|grep -qiP $HOSTNAME_RX ); then
   exit 1
 fi
 
-if [[ -z "$(dig +short A $MY_HOSTNAME)" ]]; then
+if [[ -z "$(dig +short $MY_HOSTNAME)" ]]; then
   echo "No A record exists for $MY_HOSTNAME, resolve this before continuing"
   exit 1
 fi
 
-MY_A_RECORD=$(dig +short A $MY_HOSTNAME)
+MY_A_RECORD=$(dig +short $MY_HOSTNAME |tail -n1)
 if [[ "$MY_A_RECORD" != $MY_ADDRESS ]]; then
   echo "The A record for $MY_HOSTNAME ($MY_A_RECORD) does not match its IP address ($MY_ADDRESS), resolve this before continuing"
   exit 1
