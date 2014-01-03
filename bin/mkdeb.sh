@@ -19,4 +19,5 @@ SCRIPTS_DIR="./package-scripts"
 
 . ./package-scripts/control.sh
 
+rm *.deb
 fpm -C $CHDIR -t $TYPE -s $SOURCE -n $BASE_NAME -v $VERSION --prefix $PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $1
