@@ -9,7 +9,6 @@ SCRIPTS_DIR=${SCRIPTS_DIR:-"package-scripts"}
 SCRIPTS_DIR="../$SCRIPTS_DIR"
 TYPE="deb"
 SOURCE="dir"
-NAME=${JOB_NAME#"build-"}
 EMAIL="Photobox Core Team <core@photobox.com>"
 URL="http://www.photobox.com"
 VENDOR="Photobox"
@@ -24,7 +23,7 @@ cd $TMPDIR
 
 . $SCRIPTS_DIR/control.sh
 
-fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $NAME -v $VERSION --prefix $PACKAGE_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL .
+fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $VERSION --prefix $PACKAGE_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL .
 
 scp *.deb proj.photobox.co.uk:/tmp
 rm *.deb
