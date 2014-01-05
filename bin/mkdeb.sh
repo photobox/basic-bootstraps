@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
 VERSION=${VERSION:-"1.0"}
