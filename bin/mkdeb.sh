@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
 VERSION=${VERSION:-"1.0"}
@@ -32,8 +32,8 @@ REPO_INJECT_COMMAND=${REPO_INJECT_COMMAND:-"/handsfree/scripts/debrepo_simple.pl
 for release in $UBUNTU_RELEASES; do
   REPO_PATH="$BASE_REPO_PATH/$release"
   scp *.deb $REPO_HOST:$REPO_PATH/binary
-  [ "$release" == "lucid" ] && ssh $REPO_HOST /handsfree/scripts/purge_debs.pl -v
-  ssh $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
+  [ "$release" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
+  ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
 done
 
 rm *.deb
