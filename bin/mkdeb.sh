@@ -1,10 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
-[ -n "$PACKAGE_NAME" ] || { echo '$PACKAGE_NAME unset'; exit 1; }
-[ -n "$INSTALL_PREFIX" ] || { echo '$INSTALL_PREFIX unset'; exit 1; }
-[ -n "$BUILD_NUMBER" ] || { echo 'Jenkins envvar $BUILD_NUMBER unset'; exit 1; }
+function bail {
+    echo $1;
+    exit 1;
+}
+
+[ -n "$PACKAGE_NAME" ]   || bail '$PACKAGE_NAME unset';
+[ -n "$INSTALL_PREFIX" ] || bail'$INSTALL_PREFIX unset';
+[ -n "$BUILD_NUMBER" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
 PAYLOAD_DIR=${PAYLOAD_DIR:-"build"}
 AUTO_VERSION="$BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
