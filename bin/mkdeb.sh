@@ -23,7 +23,7 @@ cd $TMPDIR
 
 . $SCRIPTS_DIR/control.sh
 
-fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $VERSION --prefix $PACKAGE_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $VERSION --prefix $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
 REPO_HOST=${REPO_HOST:-"proj.photobox.co.uk"}
 BASE_REPO_PATH=${BASE_REPO_PATH:-"/install/repo/apt"}
