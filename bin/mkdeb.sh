@@ -7,7 +7,7 @@ export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 [ -n "$JENKINS_BUILD_NUMBER" ] || { echo '$JENKINS_BUILD_NUMBER unset'; exit 1; }
 
 PAYLOAD_DIR=${PAYLOAD_DIR:-"build"}
-AUTO_VERSION="$JENKINS_BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
+AUTO_VERSION="$BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 VERSION=${VERSION:-$AUTO_VERSION}
 SCRIPTS_DIR=${SCRIPTS_DIR:-"package-scripts"}
 TYPE="deb"
