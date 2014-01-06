@@ -12,8 +12,11 @@ SOURCE="dir"
 EMAIL="Photobox Core Team <core@photobox.com>"
 URL="http://www.photobox.com"
 VENDOR="Photobox"
-TMPDIR=$(mktemp -p . -d deb.XXXXXXXXXX)
 
+[ -n "$PACKAGE_NAME" ] || { echo '$PACKAGE_NAME unset'; exit 1; }
+[ -n "$INSTALL_PREFIX" ] || { echo '$INSTALL_PREFIX unset'; exit 1; }
+
+TMPDIR=$(mktemp -p . -d deb.XXXXXXXXXX)
 cd $TMPDIR
 
 [ -f "$SCRIPTS_DIR/postinst" ] && SCRIPTS+="--post-install $SCRIPTS_DIR/postinst "
