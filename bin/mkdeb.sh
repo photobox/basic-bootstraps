@@ -4,7 +4,7 @@ export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
 [ -n "$PACKAGE_NAME" ] || { echo '$PACKAGE_NAME unset'; exit 1; }
 [ -n "$INSTALL_PREFIX" ] || { echo '$INSTALL_PREFIX unset'; exit 1; }
-[ -n "$JENKINS_BUILD_NUMBER" ] || { echo '$JENKINS_BUILD_NUMBER unset'; exit 1; }
+[ -n "$BUILD_NUMBER" ] || { echo '$JENKINS_BUILD_NUMBER unset'; exit 1; }
 
 PAYLOAD_DIR=${PAYLOAD_DIR:-"build"}
 AUTO_VERSION="$BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
