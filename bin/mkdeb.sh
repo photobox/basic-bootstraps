@@ -2,22 +2,24 @@
 set -e
 export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
-VERSION=${VERSION:-"1.0"}
+[ -n "$PACKAGE_NAME" ] || { echo '$PACKAGE_NAME unset'; exit 1; }
+[ -n "$INSTALL_PREFIX" ] || { echo '$INSTALL_PREFIX unset'; exit 1; }
+[ -n "$JENKINS_BUILD_NUMBER" ] || { echo '$JENKINS_BUILD_NUMBER unset'; exit 1; }
+
 PAYLOAD_DIR=${PAYLOAD_DIR:-"build"}
-PAYLOAD_DIR="../$PAYLOAD_DIR"
+AUTO_VERSION="$JENKINS_BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
+VERSION=${VERSION:-$AUTO_VERSION}
 SCRIPTS_DIR=${SCRIPTS_DIR:-"package-scripts"}
-SCRIPTS_DIR="../$SCRIPTS_DIR"
 TYPE="deb"
 SOURCE="dir"
 EMAIL="Photobox Core Team <core@photobox.com>"
 URL="http://www.photobox.com"
 VENDOR="Photobox"
 
-[ -n "$PACKAGE_NAME" ] || { echo '$PACKAGE_NAME unset'; exit 1; }
-[ -n "$INSTALL_PREFIX" ] || { echo '$INSTALL_PREFIX unset'; exit 1; }
-
 TMPDIR=$(mktemp -p . -d deb.XXXXXXXXXX)
 cd $TMPDIR
+PAYLOAD_DIR="../$PAYLOAD_DIR"
+SCRIPTS_DIR="../$SCRIPTS_DIR"
 
 [ -f "$SCRIPTS_DIR/postinst" ] && SCRIPTS+="--post-install $SCRIPTS_DIR/postinst "
 [ -f "$SCRIPTS_DIR/postrm" ] && SCRIPTS+="--post-uninstall $SCRIPTS_DIR/postrm "
