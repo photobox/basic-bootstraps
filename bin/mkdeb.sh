@@ -20,6 +20,8 @@ SOURCE='dir'
 EMAIL='Photobox Core Team <core@photobox.com>'
 URL='http://www.photobox.com'
 VENDOR='Photobox'
+DESCRIPTION='Boilerplate - please set $DESCRIPTION in control.sh
+Boilerplate long description'
 
 TMPDIR=$(mktemp -p . -d deb.XXXXXXXXXX)
 cd $TMPDIR
@@ -32,6 +34,11 @@ SCRIPTS_DIR="../${SCRIPTS_DIR}"
 [ -f "${SCRIPTS_DIR}/prerm" ] && SCRIPTS+="--before-remove ${SCRIPTS_DIR}/prerm "
 
 . $SCRIPTS_DIR/control.sh
+
+# Append packages that this package was built against to the package description if a build.info file is present in $PAYLOAD DIR
+[ -f $PAYLOAD_DIR/build.info ] && DESCRIPTION+="
+This package was built against:
+$(< $PAYLOAD_DIR/build.info)"
 
 fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION --prefix $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
