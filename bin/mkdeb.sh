@@ -2,6 +2,11 @@
 set -e
 export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
 
+if [[ "$MAKE_PACKAGE" == "false" ]]; then
+  echo 'Not building package because $MAKE_PACKAGE is "false"'
+  exit 0
+fi
+
 function bail {
     echo $1;
     exit 1;
