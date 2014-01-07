@@ -84,8 +84,8 @@ if [ -f $PAYLOAD_DIR/build.info ]; then
   while read i; do
     echo $i
   done < $PAYLOAD_DIR/build.info
+  echo ""
 fi
-echo ""
 echo "Complete."
 echo "============================================================"
 echo ""
