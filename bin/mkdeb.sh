@@ -42,12 +42,24 @@ SCRIPTS_DIR="../${SCRIPTS_DIR}"
 
 . $SCRIPTS_DIR/control.sh
 
+for i in $DEPENDS; do
+  DEPENDS_AS_OPTS+="-d ${i} "
+done
+
+for i in $CONFLICTS; do
+  CONFLICTS_AS_OPTS+="--conflicts ${i} "
+done
+
+for i in $RECOMMENDS; do
+  RECOMMENDS_AS_OPTS+="--deb-recommends ${i} "
+done
+
 # Append packages that this package was built against to the package description if a build.info file is present in $PAYLOAD DIR
 [ -f $PAYLOAD_DIR/build.info ] && DESCRIPTION+="
 This package was built against:
 $(< $PAYLOAD_DIR/build.info)"
 
-$FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+$FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
 REPO_HOST=${REPO_HOST:-'proj.photobox.co.uk'}
 BASE_REPO_PATH=${BASE_REPO_PATH:-'/install/repo/apt'}
