@@ -71,16 +71,26 @@ for release in $UBUNTU_RELEASES; do
   ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
 done
 
-rm *.deb
-cd ..
-rmdir $TMPDIR
-
 set +x
 echo ""
 echo "============================================================"
 echo "Build, packaging and repo injection of:"
 echo ""
 echo "${PACKAGE_NAME} ${PACKAGE_VERSION}"
+if [ -f $PAYLOAD_DIR/build.info ]; then
+  echo ""
+  echo "Built against:"
+  echo ""
+  while read i; do
+    echo $i
+  done < $PAYLOAD_DIR/build.info
+fi
 echo ""
 echo "Complete."
 echo "============================================================"
+echo ""
+
+set -x
+rm *.deb
+cd ..
+rmdir $TMPDIR
