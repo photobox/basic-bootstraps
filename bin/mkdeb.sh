@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-FPM='/var/lib/gems/2.8/gems/fpm-1.0.1/bin/fpm'
+FPM='/var/lib/gems/1.8/gems/fpm-1.0.1/bin/fpm'
 
 if [[ "$MAKE_PACKAGE" == "false" ]]; then
   echo 'Not building package because $MAKE_PACKAGE is "false"'
