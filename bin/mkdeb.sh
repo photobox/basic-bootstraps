@@ -12,7 +12,7 @@ function bail {
 [ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
-VERSION=${VERSION:-"1.1"}
+VERSION=${VERSION:-"1.2"}
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 TYPE='deb'
