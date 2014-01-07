@@ -11,7 +11,7 @@ PUPPET_REPO=${PUPPET_REPO:-prod}
 SITENAME=${SITENAME:-uktechnology}
 MY_ADDRESS=`hostname -i |awk '{print $1;}'`
 
-HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]?(\.core)?\.photobox\.(priv|com)$'
+HOSTNAME_RX='^[a-z\-]+-sandbox[1-9]+?(\.core)?\.photobox\.(priv|com)$'
 
 if [[ $EUID -ne 0 ]]; then
   echo "This script must be run as root" 1>&2
