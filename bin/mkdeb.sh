@@ -14,7 +14,6 @@ function bail {
 }
 
 [ -n "${PACKAGE_NAME}" ]   || bail '$PACKAGE_NAME unset';
-[ -n "${INSTALL_PREFIX}" ] || bail '$INSTALL_PREFIX unset';
 [ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
