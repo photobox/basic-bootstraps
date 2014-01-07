@@ -12,8 +12,8 @@ function bail {
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
 PAYLOAD_DIR=${PAYLOAD_DIR:-'build'}
-AUTO_VERSION="$BUILD_NUMBER-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
-VERSION=${VERSION:-$AUTO_VERSION}
+VERSION=${VERSION:-"1.1"}
+PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 TYPE='deb'
 SOURCE='dir'
@@ -33,7 +33,7 @@ SCRIPTS_DIR="../${SCRIPTS_DIR}"
 
 . $SCRIPTS_DIR/control.sh
 
-fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $VERSION --prefix $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION --prefix $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
 REPO_HOST=${REPO_HOST:-'proj.photobox.co.uk'}
 BASE_REPO_PATH=${BASE_REPO_PATH:-'/install/repo/apt'}
