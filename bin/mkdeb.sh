@@ -74,3 +74,13 @@ done
 rm *.deb
 cd ..
 rmdir $TMPDIR
+
+set +x
+echo ""
+echo "============================================================"
+echo "Build, packaging and repo injection of:"
+echo ""
+echo "${PACKAGE_NAME} ${PACKAGE_VERSION}"
+echo ""
+echo "Complete."
+echo "============================================================"
