@@ -26,10 +26,10 @@ cd $TMPDIR
 PAYLOAD_DIR="../${PAYLOAD_DIR}"
 SCRIPTS_DIR="../${SCRIPTS_DIR}"
 
-[ -f "${SCRIPTS_DIR}/postinst" ] && SCRIPTS+="--post-install ${SCRIPTS_DIR}/postinst "
-[ -f "${SCRIPTS_DIR}/postrm" ] && SCRIPTS+="--post-uninstall ${SCRIPTS_DIR}/postrm "
+[ -f "${SCRIPTS_DIR}/postinst" ] && SCRIPTS+="--after-install ${SCRIPTS_DIR}/postinst "
+[ -f "${SCRIPTS_DIR}/postrm" ] && SCRIPTS+="--after-remove ${SCRIPTS_DIR}/postrm "
 [ -f "${SCRIPTS_DIR}/preinst" ] && SCRIPTS+="--before-install ${SCRIPTS_DIR}/preinst "
-[ -f "${SCRIPTS_DIR}/prerm" ] && SCRIPTS+="--before-uninstall ${SCRIPTS_DIR}/prerm "
+[ -f "${SCRIPTS_DIR}/prerm" ] && SCRIPTS+="--before-remove ${SCRIPTS_DIR}/prerm "
 
 . $SCRIPTS_DIR/control.sh
 
