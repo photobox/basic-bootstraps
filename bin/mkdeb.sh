@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
-export PATH=$PATH:/var/lib/gems/1.8/gems/fpm-1.0.1/bin
+
+FPM='/var/lib/gems/2.8/gems/fpm-1.0.1/bin/fpm'
 
 if [[ "$MAKE_PACKAGE" == "false" ]]; then
   echo 'Not building package because $MAKE_PACKAGE is "false"'
@@ -20,6 +21,7 @@ function bail {
 VERSION=${VERSION:-"1.2"}
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
+INSTALL_PREFIX=${INSTALL_PREFIX:+"--prefix $INSTALL_PREFIX"}
 TYPE='deb'
 SOURCE='dir'
 EMAIL='Photobox Core Team <core@photobox.com>'
@@ -45,7 +47,7 @@ SCRIPTS_DIR="../${SCRIPTS_DIR}"
 This package was built against:
 $(< $PAYLOAD_DIR/build.info)"
 
-fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION --prefix $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+$FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS $RECOMMENDS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
 REPO_HOST=${REPO_HOST:-'proj.photobox.co.uk'}
 BASE_REPO_PATH=${BASE_REPO_PATH:-'/install/repo/apt'}
