@@ -9,9 +9,9 @@ function bail {
 
 [ -n "${PACKAGE_NAME}" ]   || bail '$PACKAGE_NAME unset';
 [ -n "${INSTALL_PREFIX}" ] || bail '$INSTALL_PREFIX unset';
+[ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
-PAYLOAD_DIR=${PAYLOAD_DIR:-'build'}
 VERSION=${VERSION:-"1.1"}
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
