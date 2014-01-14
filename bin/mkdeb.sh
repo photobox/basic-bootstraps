@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+# Set to to either "true" or "false" using a Jenkins checkbox (boolean param)
+if "$MAKE_PACKAGE"; then
+  echo 'Not building package because $MAKE_PACKAGE is false'
+  exit 0
+fi
+
 # TODO: find a better fix for this hack that works around Ubuntu not setting
 # PATH up so gem executables work
 FPM=$(gem which fpm)
 FPM="${FPM%/lib/fpm.rb}/bin/fpm"
-
-if [[ "$MAKE_PACKAGE" == "false" ]]; then
-  echo 'Not building package because $MAKE_PACKAGE is "false"'
-  exit 0
-fi
 
 function bail {
     echo $1;
