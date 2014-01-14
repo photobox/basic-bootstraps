@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Nasty hack because Ubuntu is install gem executables into a silly place.
+# TODO: find a better fix for this hack that works around Ubuntu not setting
+# PATH up so gem executables work
 FPM=$(gem which fpm)
 FPM="${FPM%/lib/fpm.rb}/bin/fpm"
 
@@ -19,6 +20,7 @@ function bail {
 [ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
+PACKAGE_AS_ROOT=${PACKAGE_AS_ROOT:-false}
 VERSION=${VERSION:-"1.2"}
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
@@ -60,7 +62,9 @@ done
 This package was built against:
 $(< $PAYLOAD_DIR/build.info)"
 
-$FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+"$PACKAGE_AS_ROOT" && SUDO="sudo"
+
+$SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
 
 REPO_HOST=${REPO_HOST:-'proj.photobox.co.uk'}
 BASE_REPO_PATH=${BASE_REPO_PATH:-'/install/repo/apt'}
@@ -93,6 +97,6 @@ echo "============================================================"
 echo ""
 
 set -x
-rm *.deb
+$SUDO rm *.deb
 cd ..
 rmdir $TMPDIR
