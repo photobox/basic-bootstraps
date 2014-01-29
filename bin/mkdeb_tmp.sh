@@ -36,8 +36,8 @@ Boilerplate long description'
 
 TMPDIR=$(mktemp -p . -d deb.XXXXXXXXXX)
 cd $TMPDIR
-PAYLOAD_DIR="${WORKDIR}/${PAYLOAD_DIR}"
-SCRIPTS_DIR="${WORKDIR}/${SCRIPTS_DIR}"
+PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
+SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
 
 [ -f "${SCRIPTS_DIR}/postinst" ] && SCRIPTS+="--after-install ${SCRIPTS_DIR}/postinst "
 [ -f "${SCRIPTS_DIR}/postrm" ] && SCRIPTS+="--after-remove ${SCRIPTS_DIR}/postrm "
