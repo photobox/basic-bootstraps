@@ -21,8 +21,8 @@ function bail {
 [ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
 
-PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
-SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
+[[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
+[[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
 PACKAGE_AS_ROOT=${PACKAGE_AS_ROOT:-false}
 VERSION=${VERSION:-"1.2"}
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r$(svnversion $PAYLOAD_DIR)"
