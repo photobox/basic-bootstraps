@@ -20,6 +20,7 @@ function bail {
 [ -n "${PACKAGE_NAME}" ]   || bail '$PACKAGE_NAME unset';
 [ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
 [ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
+[ -n "${WORKSPACE}" ]      || bail 'Jenkins envvar $WORKSPACE unset';
 
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
