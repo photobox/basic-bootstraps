@@ -85,8 +85,8 @@ echo "============================================================"
 echo "Build, packaging and repo injection of:"
 echo ""
 echo "${PACKAGE_NAME} ${PACKAGE_VERSION}"
+echo ""
 if [ -f $PAYLOAD_DIR/build.info ]; then
-  echo ""
   echo "Built against:"
   echo ""
   while read i; do
