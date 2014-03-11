@@ -45,7 +45,7 @@ if [[ -z "$(dig +short $MY_HOSTNAME)" ]]; then
   exit 1
 fi
 
-wget -q https://raw.github.com/photobox/basic-bootstraps/master/bin/install_puppet_agent.sh -O - | bash
+wget -q --no-check-certificate https://raw.github.com/photobox/basic-bootstraps/master/bin/install_puppet_agent.sh -O - | bash
 
 DIR=puppet_svn
 SVN_URL="http://svn.core.photobox.com/babel/handsfree/puppet/$PUPPET_REPO"
