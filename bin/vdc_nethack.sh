@@ -1,15 +1,25 @@
 #!/bin/bash
 #
-# rc.local
+# This script makes adjustments to VDC instance networking in order to make
+# instances function as happy Babel servers. I'm not convinced a lot of the
+# work done by this script actually needs to be done, but in the interests of
+# expediency I just improved up the code I found in /etc/rc.local a bit and put
+# it here for now.
 #
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
+# This script does the following things:
 #
-# In order to enable or disable this script just change the execution
-# bits.
+# * Sets the hostname to whatever DCHP thinks it should be (why?)
 #
-# By default this script does nothing.
+# * Sets up entries in /etc/hosts, using the "photobox.com" domain, so that
+#   `hostname`, `hostname -s` & `hostname -f` all do the right thing (why do we
+#   need to use the photobox.com domain?)
+#
+# * Sets up a route to 10.0.0.0/8 via the original, DHCP supplied, gateway so
+#   that all outbound traffic doesn't use the NAT instance.
+#
+# * Sets a new default route using the NAT instance supplied as the envvar
+#   NAT_DEVICE, or a default (why?)
+#
 set -e
 
 NAT_DEVICE=${NAT_DEVICE:-"10.93.2.129"}
@@ -27,9 +37,6 @@ while [ -z "${ADDRESS}" ]; do
         sleep 5
 done
 xlog "Address: ${ADDRESS}"
-
-NS=$(grep domain-name-servers /var/lib/dhcp3/dhclient.eth0.leases|tail -1|sed -E 's/;$//'|awk '{print $NF}'|cut -d, -f1)
-xlog "Using local NS: ${NS}"
 
 HOSTNAME=$(grep host-name /var/lib/dhcp3/dhclient.eth0.leases|tail -1|sed -E 's/;$//'|awk '{print $NF}'|sed 's/"//g')
 hostname ${HOSTNAME}
