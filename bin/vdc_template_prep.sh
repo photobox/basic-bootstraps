@@ -19,6 +19,8 @@ GIT="git-core"
 
 apt-get -y install $GIT
 
+exit
+
 WORKDIR=$(mktemp -d)
 cd $WORKDIR
 
