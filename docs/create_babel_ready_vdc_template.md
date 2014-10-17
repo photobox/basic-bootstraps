@@ -4,11 +4,11 @@
 
 ##Steps
 
-Connect to the parent instance and configure networking so that the software may be installed. You need to know the address of a NAT instance that provided internet access before yuou start.
+Before beginning you need to know the address of a NAT instance that will provide internet access during the bootstrap software installation.
 
 ##Set up temporary networking
 
-The bare template doesn't know how to route to the internet by design but preinstallation requires it. This is how to set it up:
+Connect to the instance with SSH. Instances created from the bare template don't know how to route to the internet by design but preinstallation requires it; this is how to set it up:
 
 ```
 ip route add 10.0.00/8 via EXISTING_DEFAULT_GW_ADDRESS
