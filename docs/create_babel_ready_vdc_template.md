@@ -1,18 +1,18 @@
-#Creating "Babel-Ready" VDC Templates
+#Creating "babel-ready" VDC Templates
 
-"Babel-Ready" templates are created from an instance booted using a bare-OS template to which has been added the minimum amount of software needed to allow the instance to boot, classify itself based on launch time parameters in userdata and invoke Puppet successfully once.
+"babel-ready" templates are created from an instance booted using a bare-OS template to which has been added the minimum amount of software needed to allow the instance to boot, classify itself based on launch time parameters in userdata and invoke Puppet successfully once.
 
 ##Steps
 
-Before beginning you need to know the address of a NAT instance that will provide internet access during the bootstrap software installation.
+Note, before starting you need the address of a NAT instance, referred to as NAT_INSTANCE_ADDRESS in this document, that will provide internet access during the bootstrap software installation.
 
 ##Set up temporary networking
 
-Connect to the instance with SSH. Instances created from the bare template don't know how to route to the internet by design but preinstallation requires it; this is how to set it up:
+Connect to the instance with SSH and the username & password that have been ciruclated. Instances created from the bare template don't know how to route to the internet by design but preinstallation requires it; this is how to set it up:
 
 ```
-ip route add 10.0.00/8 via EXISTING_DEFAULT_GW_ADDRESS
-ip route del default
+ip route add 10.0.00/8 via $(ip route show to 0.0.0.0/0|awk '{print $3}')
+sudo ip route del to 0.0.0.0/0
 ip route add default via NAT_INSTANCE_ADDRESS
 ```
 
