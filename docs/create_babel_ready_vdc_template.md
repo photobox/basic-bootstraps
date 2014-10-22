@@ -1,6 +1,6 @@
 #Creating "babel-ready" VDC Templates
 
-"babel-ready" templates are created from an instance booted using a bare-OS template to which has been added the minimum amount of software needed to allow the instance to boot, classify itself based on launch time parameters in userdata and invoke Puppet successfully once.
+**babel-ready** templates are created from an instance booted using a bare-OS template to which has been added the minimum amount of software needed to allow the instance to boot, classify itself based on launch time parameters in userdata and invoke Puppet successfully once.
 
 ##Steps
 
@@ -8,7 +8,7 @@ Note, before starting you need the address of a NAT instance, referred to as NAT
 
 ##Set up temporary networking
 
-Connect to the instance with SSH and the username & password that have been ciruclated. Instances created from the bare template don't know how to route to the internet by design but preinstallation requires it; this is how to set it up:
+Connect to the instance with SSH and the username & password that have been circulated. Instances created from the bare template don't know how to route to the internet by design but preinstallation requires it; this is how to set it up:
 
 ```
 ip route add 10.0.00/8 via $(ip route show to 0.0.0.0/0|awk '{print $3}')
@@ -28,10 +28,43 @@ Next, follow the instructions printed by the previous step to complete the prein
 
 ##Snapshot & Template Instance
 
-Snapshot the instance by first discovering the volume id of the source instance.
+Make sure the instance about to be snapshotted is in state **Stopped**.
 
 ```
-$ cloudmonkey
+vdc> list virtualmachines id=VM_ID
+```
+
+The command `vdc_list_instances` command provided by [net-cloudstack-simple](https://github.com/photobox/net-cloudstack-simple) amy also be used.
+
+If necessary stop the VM:
+
+```
+vdc> stop virtualmachine id=VM_ID
+```
+
+Note that sometimes a VM will take a few minutes to show correct status after a poweroff from the shell or an API 'stop'.
+
+Now snapshot the VM's root volume:
+
+```
 vdc> list volumes virtualmachineid=YOUR_VM_ID
-vdc> create template volumeid=VOLUME_ID_FROM_LAST_STEP ostypeid=d0f2984c-8510-11e3-8895-005056ac0d46 name=SOME_NAME displaytext="My Awesome Template"
+vdc> create snapshot volumeid=VOLUME_ID_FROM_PREVIOUS_STEP
+```
+
+The snapshotting process typically takes 10 minutes. When it has completed, create a template from the snapshot:
+
+```
+vdc> create template snapshotid=SNAPSHOT_ID_FROM_LAST_STEP ostypeid=d0f2984c-8510-11e3-8895-005056ac0d46 name=SOME_NAME displaytext="My Awesome Template"
+```
+
+Template creation should only take a few seconds. Note that the command above assumes the OS is **Ubuntu 10.04**, otherwise a different 'ostype' is required. Ostype IDs can be discovered by:
+
+```
+vdc> list ostypes
+```
+
+A keyword may be provided to narrow the search, eg:
+
+```
+vdc> list ostypes keyword=12.04
 ```
