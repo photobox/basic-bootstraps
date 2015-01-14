@@ -48,7 +48,7 @@ fi
 wget -q --no-check-certificate https://raw.github.com/photobox/basic-bootstraps/master/bin/install_puppet_agent.sh -O - | bash
 
 DIR=puppet_svn
-SVN_URL="http://svn.core.photobox.com/babel/handsfree/puppet/$PUPPET_REPO"
+SVN_URL="http://svn.core.photobox.com/babel/handsfree/puppet/$PUPPET_REPO@57745"
 SVN_OPTS="--username $SVN_USER --password $SVN_PASSWORD --no-auth-cache"
 echo "Checking out $SVN_URL to $DIR"
 
