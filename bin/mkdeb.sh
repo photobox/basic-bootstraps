@@ -27,7 +27,7 @@ SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
 PACKAGE_AS_ROOT=${PACKAGE_AS_ROOT:-false}
 VERSION=${VERSION:-"1.2"}
-SVN_VERSION=$(svnversion $PAYLOAD_DIR | sed "s/.*://" )
+SVN_VERSION=$(svnversion $PAYLOAD_DIR | sed 's/^.*://' )
 PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r${SVN_VERSION}"
 INSTALL_PREFIX=${INSTALL_PREFIX:+"--prefix $INSTALL_PREFIX"}
 TYPE='deb'
