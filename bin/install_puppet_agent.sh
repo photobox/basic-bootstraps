@@ -9,8 +9,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 DEBIAN_FRONTEND=noninteractive
-PUPPET_VERSION=${PUPPET_VERSION:-"3.4.2-1puppetlabs1"}
-FACTER_VERSION=${FACTER_VERSION:-"1.7.4-1puppetlabs1"}
+PUPPET_VERSION=${PUPPET_VERSION:-"3.7.4-1puppetlabs1"}
+FACTER_VERSION=${FACTER_VERSION:-"2.4.1-1puppetlabs1"}
 
 have_version(){
   local PACKAGE=$1
