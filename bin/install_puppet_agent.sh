@@ -37,3 +37,7 @@ if ! puppet_is_current; then
   apt-get update
   apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION vim-puppet=$PUPPET_VERSION
 fi
+
+# Debian packages still specify 'templatedir' in the client config file which
+# leads to annoying deprecation warnings
+sed -i '/templatedir/d' /etc/puppet/puppet.conf
