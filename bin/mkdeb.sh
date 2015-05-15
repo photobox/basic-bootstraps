@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-# Set to to either "true" or "false" using a Jenkins checkbox (boolean param)
+# Set to either "true" or "false" using a jenkins checkbox (boolean param)
 if ! "$MAKE_PACKAGE"; then
   echo 'Not building package because $MAKE_PACKAGE is false'
   exit 0
 fi
 
 # TODO: find a better fix for this hack that works around Ubuntu not setting
-# PATH up so gem executables work
+# PATH up so gem executables work on Ubuntu 10.04
 FPM=$(gem which fpm)
 FPM="${FPM%/lib/fpm.rb}/bin/fpm"
 
@@ -17,24 +17,31 @@ function bail {
     exit 1;
 }
 
-[ -n "${PACKAGE_NAME}" ]   || bail '$PACKAGE_NAME unset';
-[ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset';
-[ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset';
-[ -n "${WORKSPACE}" ]      || bail 'Jenkins envvar $WORKSPACE unset';
+[ -n "${PACKAGE_NAME}" ]   || bail '$PACKAGE_NAME unset'
+[ -n "${PAYLOAD_DIR}" ]    || bail '$PAYLOAD_DIR unset'
+[ -n "${BUILD_NUMBER}" ]   || bail 'Jenkins envvar $BUILD_NUMBER unset'
+[ -n "${WORKSPACE}" ]      || bail 'Jenkins envvar $WORKSPACE unset'
 
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
 [[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
 PACKAGE_AS_ROOT=${PACKAGE_AS_ROOT:-false}
 VERSION=${VERSION:-"1.2"}
-SVN_VERSION=$(svnversion $PAYLOAD_DIR | sed 's/^.*://' )
-PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')r${SVN_VERSION}"
+
+# maintain behaviour whereby the current directory is assumed to be an SVN
+# working copy if REVISION is not supplied. Also handle the case where REVISION
+# isn't supplied and the current directory isn't an SVN working copy.
+if [ -z "${REVISION}" ] && svn info $PAYLOAD_DIR >/dev/null 2>&1; then
+  REVISION=$(svnversion $PAYLOAD_DIR | sed 's/^.*://')
+fi
+PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')${REVISION:+r$REVISION}"
+
 INSTALL_PREFIX=${INSTALL_PREFIX:+"--prefix $INSTALL_PREFIX"}
 TYPE='deb'
 SOURCE='dir'
-EMAIL='Photobox Core Team <core@photobox.com>'
+EMAIL='Photobox Babel Team <babelteam@photobox.com>'
 URL='http://www.photobox.com'
-VENDOR='Photobox'
+VENDOR='PhotoBox'
 DESCRIPTION='Boilerplate - please set $DESCRIPTION in control.sh
 Boilerplate long description'
 
@@ -67,21 +74,29 @@ $(< $PAYLOAD_DIR/build.info)"
 
 "$PACKAGE_AS_ROOT" && SUDO="sudo"
 
-$SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .
+PACKAGE_FILENAME=$($SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
 
-REPO_HOST=${REPO_HOST:-'proj.photobox.co.uk'}
-BASE_REPO_PATH=${BASE_REPO_PATH:-'/install/repo/apt'}
-REPO_INJECT_COMMAND=${REPO_INJECT_COMMAND:-'/handsfree/scripts/debrepo_simple.pl'}
+if dpkg --compare-versions "$(lsb_release -rs)" "<" "12.04"; then
+  echo "Running on Ubuntu < 12.04, uploading to on-premise repo at '${REPO_HOST}'"
+  REPO_HOST=${REPO_HOST:-"proj.photobox.co.uk"}
+  BASE_REPO_PATH=${BASE_REPO_PATH:-"/install/repo/apt"}
+  REPO_INJECT_COMMAND=${REPO_INJECT_COMMAND:-"/handsfree/scripts/debrepo_simple.pl"}
 
-for release in $UBUNTU_RELEASES; do
-  REPO_PATH="${BASE_REPO_PATH}/${release}"
-  scp *.deb $REPO_HOST:$REPO_PATH/binary
-  [ "${release}" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
-  ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
-done
+  for release in $UBUNTU_RELEASES; do
+    REPO_PATH="${BASE_REPO_PATH}/${release}"
+    scp $PACKAGE_FILENAME $REPO_HOST:$REPO_PATH/binary
+    [ "${release}" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
+    ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
+  done
+else
+  S3_BUCKET=${S3_BUCKET:-"bentis-deb-s3-dev"}
+  echo "Running on Ubuntu >= 12.04, uploading direct to S3 bucket '${S3_BUCKET}'"
+  RELEASE_CODENAME=$(lsb_release -cs)
+  deb-s3 upload -p -b ${S3_BUCKET} -c ${RELEASE_CODENAME} ${PACKAGE_FILENAME}
+fi
 
 set +x
-echo ""
+echo
 echo "============================================================"
 echo "Build, packaging and repo injection of:"
 echo ""
@@ -97,9 +112,9 @@ if [ -f $PAYLOAD_DIR/build.info ]; then
 fi
 echo "Complete."
 echo "============================================================"
-echo ""
-
+echo
 set -x
-$SUDO rm *.deb
+
+$SUDO rm ${PACKAGE_FILENAME}
 cd ..
 rmdir $TMPDIR
