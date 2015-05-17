@@ -92,7 +92,7 @@ else
   S3_BUCKET=${S3_BUCKET:-"bentis-deb-s3-dev"}
   echo "Running on Ubuntu >= 12.04, uploading direct to S3 bucket '${S3_BUCKET}'"
   RELEASE_CODENAME=$(lsb_release -cs)
-  deb-s3 upload -p -b ${S3_BUCKET} -c ${RELEASE_CODENAME} ${PACKAGE_FILENAME}
+  deb-s3 upload -p -b ${S3_BUCKET} -v private -c ${RELEASE_CODENAME} ${PACKAGE_FILENAME}
 fi
 
 set +x
