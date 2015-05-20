@@ -78,8 +78,8 @@ PACKAGE_FILENAME=$($SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NA
 
 RELEASE_CODENAME=$(lsb_release -cs)
 if dpkg --compare-versions "$(lsb_release -rs)" "<" "12.04"; then
-  echo "Running on Ubuntu < 12.04, uploading to on-premise repo at '${REPO_HOST}'"
   REPO_HOST=${REPO_HOST:-"proj.photobox.co.uk"}
+  echo "Running on Ubuntu < 12.04, uploading to on-premise repo at '${REPO_HOST}'"
   BASE_REPO_PATH=${BASE_REPO_PATH:-"/install/repo/apt"}
   REPO_INJECT_COMMAND=${REPO_INJECT_COMMAND:-"/handsfree/scripts/debrepo_simple.pl"}
 
