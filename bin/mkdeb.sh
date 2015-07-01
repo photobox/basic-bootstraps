@@ -87,10 +87,11 @@ if dpkg --compare-versions "$(lsb_release -rs)" "<" "12.04"; then
   scp $PACKAGE_FILENAME $REPO_HOST:$REPO_PATH/binary
   [ "${RELEASE_CODENAME}" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
   ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
+  $SUDO rm ${PACKAGE_FILENAME}
 else
   PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
   PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
-  echo "Running on Ubuntu >= 12.04, staging for injection direct to S3 repo '${S3_BUCKET}'"
+  echo "Running on Ubuntu >= 12.04, staging for injection to S3 repo"
   mv ${PACKAGE_FILENAME} ${PACKAGE_STAGING_DIR}
   echo "STAGED_PACKAGE_FILENAME=${PACKAGE_STAGING_DIR}/${PACKAGE_FILENAME}" > ${PROPERTIES_FILE}
 fi
@@ -115,6 +116,5 @@ echo "============================================================"
 echo
 set -x
 
-$SUDO rm ${PACKAGE_FILENAME}
 cd ..
 rmdir $TMPDIR
