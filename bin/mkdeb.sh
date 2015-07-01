@@ -87,11 +87,13 @@ if dpkg --compare-versions "$(lsb_release -rs)" "<" "12.04"; then
   scp $PACKAGE_FILENAME $REPO_HOST:$REPO_PATH/binary
   [ "${RELEASE_CODENAME}" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
   ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
+  $SUDO rm ${PACKAGE_FILENAME}
 else
-  S3_BUCKET=${S3_BUCKET:-"apt-photobox-babel"}
-  echo "Running on Ubuntu >= 12.04, uploading direct to S3 bucket '${S3_BUCKET}'"
-  RELEASE_CODENAME=$(lsb_release -cs)
-  deb-s3 upload -p -b ${S3_BUCKET} -v authenticated -c ${RELEASE_CODENAME} ${PACKAGE_FILENAME}
+  PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
+  PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
+  echo "Running on Ubuntu >= 12.04, staging for injection to S3 repo"
+  mv ${PACKAGE_FILENAME} ${PACKAGE_STAGING_DIR}
+  echo "STAGED_PACKAGE_FILENAME=${PACKAGE_STAGING_DIR}/${PACKAGE_FILENAME}" > ${PROPERTIES_FILE}
 fi
 
 set +x
@@ -114,6 +116,5 @@ echo "============================================================"
 echo
 set -x
 
-$SUDO rm ${PACKAGE_FILENAME}
 cd ..
 rmdir $TMPDIR
