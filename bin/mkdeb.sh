@@ -76,25 +76,11 @@ $(< $PAYLOAD_DIR/build.info)"
 
 PACKAGE_FILENAME=$($SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
 
-RELEASE_CODENAME=$(lsb_release -cs)
-if dpkg --compare-versions "$(lsb_release -rs)" "<" "12.04"; then
-  REPO_HOST=${REPO_HOST:-"proj.photobox.co.uk"}
-  echo "Running on Ubuntu < 12.04, uploading to on-premise repo at '${REPO_HOST}'"
-  BASE_REPO_PATH=${BASE_REPO_PATH:-"/install/repo/apt"}
-  REPO_INJECT_COMMAND=${REPO_INJECT_COMMAND:-"/handsfree/scripts/debrepo_simple.pl"}
-
-  REPO_PATH="${BASE_REPO_PATH}/${RELEASE_CODENAME}"
-  scp $PACKAGE_FILENAME $REPO_HOST:$REPO_PATH/binary
-  [ "${RELEASE_CODENAME}" == "lucid" ] && ssh -n $REPO_HOST /handsfree/scripts/purge_debs.pl -v
-  ssh -n $REPO_HOST $REPO_INJECT_COMMAND -r $REPO_PATH -d binary
-  $SUDO rm ${PACKAGE_FILENAME}
-else
-  PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
-  PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
-  echo "Running on Ubuntu >= 12.04, staging for injection to S3 repo"
-  mv ${PACKAGE_FILENAME} ${PACKAGE_STAGING_DIR}
-  echo "STAGED_PACKAGE_FILENAME=${PACKAGE_STAGING_DIR}/${PACKAGE_FILENAME}" > ${PROPERTIES_FILE}
-fi
+PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
+PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
+echo "Staging for injection to S3 repo '${S3_BUCKET}'"
+mv ${PACKAGE_FILENAME} ${PACKAGE_STAGING_DIR}
+echo "STAGED_PACKAGE_FILENAME=${PACKAGE_STAGING_DIR}/${PACKAGE_FILENAME}" > ${PROPERTIES_FILE}
 
 set +x
 echo
