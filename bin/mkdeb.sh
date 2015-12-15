@@ -7,11 +7,6 @@ if ! "$MAKE_PACKAGE"; then
   exit 0
 fi
 
-# TODO: find a better fix for this hack that works around Ubuntu not setting
-# PATH up so gem executables work on Ubuntu 10.04
-FPM=$(gem which fpm)
-FPM="${FPM%/lib/fpm.rb}/bin/fpm"
-
 function bail {
     echo $1;
     exit 1;
@@ -25,7 +20,6 @@ function bail {
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
 [[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
-PACKAGE_AS_ROOT=${PACKAGE_AS_ROOT:-false}
 VERSION=${VERSION:-"1.2"}
 
 # maintain behaviour whereby the current directory is assumed to be an SVN
@@ -72,9 +66,7 @@ done
 This package was built against:
 $(< $PAYLOAD_DIR/build.info)"
 
-"$PACKAGE_AS_ROOT" && SUDO="sudo"
-
-PACKAGE_FILENAME=$($SUDO $FPM -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
+PACKAGE_FILENAME=$(fpm -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
 
 PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
 PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
