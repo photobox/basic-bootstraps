@@ -28,7 +28,7 @@ VERSION=${VERSION:-"1.2"}
 if [ -z "${REVISION}" ] && svn info $PAYLOAD_DIR >/dev/null 2>&1; then
   REVISION=$(svnversion $PAYLOAD_DIR | sed 's/^.*://')
 fi
-PACKAGE_VERSION="${VERSION}-${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')${REVISION:+r$REVISION}"
+PACKAGE_VERSION="${VERSION:+${VERSION}-}${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')${REVISION:+r$REVISION}"
 
 INSTALL_PREFIX=${INSTALL_PREFIX:+"--prefix $INSTALL_PREFIX"}
 TYPE='deb'
