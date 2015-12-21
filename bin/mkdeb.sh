@@ -20,7 +20,6 @@ function bail {
 SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
 [[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
-VERSION=${VERSION:-"1.2"}
 
 # maintain behaviour whereby the current directory is assumed to be an SVN
 # working copy if REVISION is not supplied. Also handle the case where REVISION
