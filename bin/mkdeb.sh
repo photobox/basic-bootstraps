@@ -21,13 +21,7 @@ SCRIPTS_DIR=${SCRIPTS_DIR:-'package-scripts'}
 [[ $PAYLOAD_DIR =~ ^/ ]] || PAYLOAD_DIR="${WORKSPACE}/${PAYLOAD_DIR}"
 [[ $SCRIPTS_DIR =~ ^/ ]] || SCRIPTS_DIR="${WORKSPACE}/${SCRIPTS_DIR}"
 
-# maintain behaviour whereby the current directory is assumed to be an SVN
-# working copy if REVISION is not supplied. Also handle the case where REVISION
-# isn't supplied and the current directory isn't an SVN working copy.
-if [ -z "${REVISION}" ] && svn info $PAYLOAD_DIR >/dev/null 2>&1; then
-  REVISION=$(svnversion $PAYLOAD_DIR | sed 's/^.*://')
-fi
-PACKAGE_VERSION="${VERSION:+${VERSION}-}${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')${REVISION:+r$REVISION}"
+PACKAGE_VERSION="${VERSION:+${VERSION}-}${BUILD_NUMBER}-$(date -u +'%Y%m%d%H%M%S')"
 
 INSTALL_PREFIX=${INSTALL_PREFIX:+"--prefix $INSTALL_PREFIX"}
 TYPE='deb'
