@@ -24,6 +24,31 @@ fi
 PUPPET_VERSION=${PUPPET_VERSION:-$DEFAULT_PUPPET_VERSION}
 FACTER_VERSION=${FACTER_VERSION:-$DEFAULT_FACTER_VERSION}
 
+install_ubuntu(){
+  export DEBIAN_FRONTEND=noninteractive
+  local TMPDIR=$(mktemp -d)
+  pushd ${TMPDIR}
+  aws s3 sync s3://babel-instance-bootstrap/puppet/ .
+  # NOTE: installing the packages with dpkg is expected to fail on deps, we fix
+  # this up with `apt-get -yf` afterwards.
+  dpkg -i \
+    "puppet-common_${PUPPET_VERSION}"* \
+    "puppet_${PUPPET_VERSION}"* \
+    "facter_${FACTER_VERSION}"* \
+    "hiera_1.3.4-1puppetlabs1"* \
+    > /dev/null 2>&1 || true
+  apt-get -yf install
+  popd
+
+  if puppet_is_current; then
+    echo "Installation succeeded"
+    exit 0
+  else
+    echo "Installation failed"
+    exit 1
+  fi
+}
+
 have_version(){
   local PACKAGE=$1
   local VERSION=$2
@@ -54,14 +79,7 @@ if ! puppet_is_current; then
     rpm -U --quiet http://yum.puppetlabs.com/puppetlabs-release-el-$(lsb_release -rs|cut -d. -f1).noarch.rpm || true
     yum -y install facter-$FACTER_VERSION puppet-$PUPPET_VERSION
   else
-    DEBIAN_FRONTEND=noninteractive
-    DEB=$(mktemp -p /tmp puppetlabs-release.deb.XXXXXXXX)
-    apt-get -y purge $(dpkg -l|grep puppet|awk '{print $2}')
-    apt-get -y install wget
-    wget -q http://apt.puppetlabs.com/puppetlabs-release-$(lsb_release -c -s).deb -O $DEB
-    dpkg -i $DEB
-    apt-get update
-    apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION vim-puppet=$PUPPET_VERSION
+    install_ubuntu
   fi
 fi
 
