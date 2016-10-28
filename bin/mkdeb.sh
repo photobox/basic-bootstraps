@@ -59,7 +59,7 @@ done
 This package was built against:
 $(< $PAYLOAD_DIR/build.info)"
 
-PACKAGE_FILENAME=$(fpm --verbose --workdir /var/lib/jenkins/fpm_tmp -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
+PACKAGE_FILENAME=$(set -o pipefail; fpm --verbose --workdir /var/lib/jenkins/fpm_tmp -C $PAYLOAD_DIR -t $TYPE -s $SOURCE -n $PACKAGE_NAME -v $PACKAGE_VERSION $INSTALL_PREFIX $DEPENDS_AS_OPTS $CONFLICTS_AS_OPTS $RECOMMENDS_AS_OPTS $SCRIPTS --description "$DESCRIPTION" -m "$EMAIL" --vendor $VENDOR --url $URL $FPM_EXTRA_FLAGS .|ruby -e 'print (eval STDIN.readlines.last)[:path]')
 PACKAGE_STAGING_DIR="${PACKAGE_STAGING_DIR:-/var/lib/jenkins/package_staging}"
 PROPERTIES_FILE="${WORKSPACE}/${PROPERTIES_FILE:-package.properties}"
 echo "Staging for injection to S3 repo '${S3_BUCKET}'"
