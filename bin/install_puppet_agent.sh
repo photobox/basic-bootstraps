@@ -24,7 +24,7 @@ fi
 PUPPET_VERSION=${PUPPET_VERSION:-$DEFAULT_PUPPET_VERSION}
 FACTER_VERSION=${FACTER_VERSION:-$DEFAULT_FACTER_VERSION}
 
-install_ubuntu(){
+install_ubuntu_cloud(){
   export DEBIAN_FRONTEND=noninteractive
   local TMPDIR=$(mktemp -d)
   pushd ${TMPDIR}
@@ -47,6 +47,17 @@ install_ubuntu(){
     echo "Installation failed"
     exit 1
   fi
+}
+
+install_ubuntu_local(){
+  DEBIAN_FRONTEND=noninteractive
+  DEB=$(mktemp -p /tmp puppetlabs-release.deb.XXXXXXXX)
+  apt-get -y purge $(dpkg -l|grep puppet|awk '{print $2}')
+  apt-get -y install wget
+  wget -q http://apt.puppetlabs.com/puppetlabs-release-$(lsb_release -c -s).deb -O $DEB
+  dpkg -i $DEB
+  apt-get update
+  apt-get -y install facter=$FACTER_VERSION puppet=$PUPPET_VERSION puppet-common=$PUPPET_VERSION vim-puppet=$PUPPET_VERSION
 }
 
 have_version(){
@@ -79,7 +90,11 @@ if ! puppet_is_current; then
     rpm -U --quiet http://yum.puppetlabs.com/puppetlabs-release-el-$(lsb_release -rs|cut -d. -f1).noarch.rpm || true
     yum -y install facter-$FACTER_VERSION puppet-$PUPPET_VERSION
   else
-    install_ubuntu
+    if curl -s -o /dev/null http://169.254.169.254/latest/meta-data/ami-id; then
+      install_ubuntu_cloud
+    else
+      install_ubuntu_local
+    fi
   fi
 fi
 
