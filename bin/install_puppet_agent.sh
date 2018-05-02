@@ -55,11 +55,9 @@ if [ $(lsb_release -r -s) != '14.04' ]; then
   export DEBIAN_FRONTEND=noninteractive
   apt-get update
   apt-get install -y puppet-common puppet facter hiera
-else
-  if ! puppet_is_current; then
-    install_ubuntu
-    # Debian packages still specify 'templatedir' in the client config file which
-    # leads to annoying deprecation warnings
-    sed -i '/templatedir/d' /etc/puppet/puppet.conf
-  fi
+elif ! puppet_is_current; then
+  install_ubuntu
+  # Debian packages still specify 'templatedir' in the client config file which
+  # leads to annoying deprecation warnings
+  sed -i '/templatedir/d' /etc/puppet/puppet.conf
 fi
